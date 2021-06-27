@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:botany/components/loading.dart';
 import 'package:botany/services/blogdata.dart';
 import 'package:flutter/material.dart';
@@ -11,13 +13,15 @@ class Encyclopedia extends StatefulWidget {
 
 class _EncyclopediaState extends State<Encyclopedia> {
   BlogData blogdata = BlogData();
-  var data;
-
+  // var data;
+  List data = [];
   @override
   void initState() {
     blogdata.fetchencyclypedia().then((value) {
       setState(() {
-        data = value.body;
+        data = jsonDecode(value.body);
+        // data = jsonDecode(data);
+        print(data[0]['Name']);
       });
     });
     super.initState();
@@ -35,6 +39,13 @@ class _EncyclopediaState extends State<Encyclopedia> {
               ),
             ),
             backgroundColor: Color.fromRGBO(252, 254, 240, 1)),
-        body: data != null ? Container(child: Text(data)) : Loading());
+        body: data != null
+            ? Container(child: ListView.builder(
+                itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  leading: Text(data[index]['Name']),
+                );
+              }))
+            : Loading());
   }
 }
